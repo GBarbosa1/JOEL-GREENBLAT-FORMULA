@@ -52,6 +52,8 @@ x = dataframe_full_asset_data.ROA.tolist()
 y = dataframe_full_asset_data.P_L.tolist()
 
 dataframe_full_asset_data.to_excel('magic_list_list.xlsx')
-
-plt.scatter(x, y)
+plt.title(label = 'ROA por P/L')
+plt.xlabel(xlabel = 'ROA')
+plt.ylabel(ylabel = 'P/L')
+plt.scatter(x,y)
 plt.show()
