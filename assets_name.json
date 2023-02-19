@@ -4,29 +4,13 @@
   "AGRO3",
   "RAIL3",
   "ALPA3",
-  "ALPA4",
-  "ALSO3",
-  "AMAR3",
-  "ABEV3",
-  "ADHM3",
-  "ARZZ3",
-  "BBAS3",
-  "BBDC3",
-  "BBDC4"
+  "ALPA4"
  ],
  "YFINANCE_CODE": [
   "ABCB4.SA",
   "AGRO3.SA",
   "RAIL3.SA",
   "ALPA3.SA",
-  "ALPA4.SA",
-  "ALSO3.SA",
-  "AMAR3.SA",
-  "ABEV3.SA",
-  "ADHM3.SA",
-  "ARZZ3.SA",
-  "BBAS3.SA",
-  "BBDC3.SA",
-  "BBDC4.SA"
+  "ALPA4.SA"
 ]
 }

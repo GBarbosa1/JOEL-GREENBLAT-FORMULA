@@ -1,59 +1,49 @@
-import yfinance as yf
-import pandas as pd
-import matplotlib.pyplot as plt
-import openpyxl
-
-assets_dataframe = pd.read_json('assets_name.json')
-roa_list = []
+from scrap_engine import scrap_init
+import pandas as pd 
+from data_converter import flotify, replacer
+from graph_handler import graph_generator
+roe_list = []
 pe_list = []
-asset_name_list = []
+asset_name_list = []    
+assets_dataframe = pd.read_json('assets_name.json')
+base_url = 'https://statusinvest.com.br/acoes/'
 
 
 for index, row in assets_dataframe.iterrows():
-    asset = row['YFINANCE_CODE']
+    asset = row['B3_CODE']
     asset_name_list.append(asset)
+    asset_url = base_url + asset
+    soup = scrap_init(True, asset_url)
     
     try:
-        asset_data = yf.Ticker(asset).info
-        asset_roa = 100*asset_data['returnOnAssets']
-        asset_roa = round(asset_roa,2)
-        roa_list.append(asset_roa)
+        
+        roe = soup.find('div', title='Mede a capacidade de agregar valor de uma empresa a partir de seus próprios recursos e do dinheiro de investidores.')
+        roe = roe.find('strong',class_ ='value d-block lh-4 fs-4 fw-700').text.strip()
+        roe = replacer(roe, '%', '')
+        roe = replacer(roe, ',','.')
+        roe = flotify(roe)
+        roe_list.append(roe)
 
     except:
-         asset_roa = 0
-         roa_list.append(asset_roa)
-         print(asset+'error on roa, roa is'+str(asset_roa))
+         print("Error acquiring "+ asset)
          pass
     
     try:
-        asset_trailing_pe = asset_data['trailingPE']
-        asset_trailing_pe = round(asset_trailing_pe,2)
-        pe_list.append(asset_trailing_pe)
+        pe = soup.find('div', title='Dá uma ideia do quanto o mercado está disposto a pagar pelos lucros da empresa.')
+        pe = pe.find('strong',class_ ='value d-block lh-4 fs-4 fw-700').text.strip()
+        pe = replacer(pe, '%', '')
+        pe = replacer(pe, ',','.')
+        pe = flotify(pe)
+        pe_list.append(pe)
+        
         
     except:
-        asset_trailing_pe = 0
-        pe_list.append(asset_trailing_pe)
-        print(asset+'error on pe, pe is'+str(asset_trailing_pe))
-        pass
-    
-
- 
-
-full_asset_data = {'ASSET_NAME':asset_name_list,'ROA':roa_list,'P_L':pe_list}
-
-dataframe_full_asset_data = pd.DataFrame(data=full_asset_data)
-
-
-
-dataframe_full_asset_data.fillna(value = 0, inplace=True)
-dataframe_full_asset_data.sort_values(by='ROA', ascending=False, inplace= True)
-
-x = dataframe_full_asset_data.ROA.tolist()
-y = dataframe_full_asset_data.P_L.tolist()
-
-dataframe_full_asset_data.to_excel('magic_list_list.xlsx')
-plt.title(label = 'ROA por P/L')
-plt.xlabel(xlabel = 'ROA')
-plt.ylabel(ylabel = 'P/L')
-plt.scatter(x,y)
-plt.show()
+         print("Error acquiring "+ asset)
+         pass
+     
+    print(roe, pe)
+     
+full_asset_data = {'ASSET_NAME':asset_name_list,'ROA':roe_list,'P_L':pe_list}
+full_asset_dataframe = pd.DataFrame(full_asset_data)
+print(full_asset_dataframe)
+graph_generator(full_asset_dataframe)
