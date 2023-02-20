@@ -4,7 +4,7 @@ def graph_generator(fii_data):
 
  
     # Step 1. Create a scatter chart
-    x = fii_data.pop('ROA')
+    x = fii_data.pop('ROE')
     y = fii_data.pop('P_L')
     names = fii_data.pop('ASSET_NAME')
 
@@ -60,7 +60,7 @@ def graph_generator(fii_data):
     ax.set_xlim(0,70)
     ax.set_ylim(0,70)
     ax.set_xlabel('ROE (Return over equity)')
-    ax.set_ylabel('Price earning')
+    ax.set_ylabel('P/E (Price earning)')
     plt.show()
      
      
