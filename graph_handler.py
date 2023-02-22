@@ -59,8 +59,10 @@ def graph_generator(fii_data):
     ax.set_title('Ações ROE/P_E')
     ax.set_xlim(0,70)
     ax.set_ylim(0,70)
-    ax.set_xlabel('ROE (Return over equity)')
+    ax.grid(visible = True, which = 'both', axis = 'both')
+    ax.set_xlabel('ROE (Return over equity, percentage) ')
     ax.set_ylabel('P/E (Price earning)')
+
     plt.show()
      
      
