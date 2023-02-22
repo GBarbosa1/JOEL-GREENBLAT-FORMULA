@@ -41,6 +41,8 @@ for index, row in assets_dataframe.iterrows():
         
         
     except:
+         pe = 0
+         pe_list.append(roe)
          print("Error acquiring "+ asset)
          pass
      
