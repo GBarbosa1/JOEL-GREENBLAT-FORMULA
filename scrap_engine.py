@@ -12,7 +12,7 @@ def scrap_init(is_headless, url):
     browser = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
     url = url
     browser.get(url)
-    time.sleep(0.05)
+    time.sleep(0.2)
     soup = BeautifulSoup(browser.page_source, 'lxml')
     browser.quit()
     return soup

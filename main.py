@@ -25,6 +25,8 @@ for index, row in assets_dataframe.iterrows():
         roe_list.append(roe)
 
     except:
+         roe = 0
+         roe_list.append(roe)
          print("Error acquiring "+ asset)
          pass
     
@@ -38,17 +40,14 @@ for index, row in assets_dataframe.iterrows():
         
         
     except:
+         pe = 0
+         pe_list.append(pe)
          print("Error acquiring "+ asset)
          pass
      
     print(roe, pe)
      
-full_asset_data = {'ASSET_NAME':asset_name_list,'ROE':roe_list,'P_L':pe_list}
-full_asset_dataframe = pd.DataFrame(data = full_asset_data, columns=['ASSET_NAME','ROE','P_L'])
-
-full_asset_dataframe.sort_values(by = 'ROE', ascending = False, inplace = True)
-full_asset_dataframe.sort_values(by = 'P_L', ascending = True, inplace = True)
-full_asset_dataframe = full_asset_dataframe[full_asset_dataframe.ROE >= 25]
-full_asset_dataframe.to_csv('JOEL.csv')
+full_asset_data = {'ASSET_NAME':asset_name_list,'ROA':roe_list,'P_L':pe_list}
+full_asset_dataframe = pd.DataFrame(full_asset_data)
+print(full_asset_dataframe)
 graph_generator(full_asset_dataframe)
-full_asset_dataframe.reset_index(inplace = True)
