@@ -20,11 +20,11 @@ def data_filter(dataframe, column, filter_min=False, filter_max=False):
         dataframe = dataframe[dataframe.column <= filter_max]
     return dataframe
 
-def df_converter(dataframe, name_path, file_type):
-    if file_type == 'csv':
+def df_converter(dataframe, name_path):
+    if name_path == 'csv':
         dataframe.to_csv(name_path)
     
-    elif file_type == 'xlsx':
+    elif name_path == 'xlsx':
         dataframe.to_xlsx(name_path)
         
 def reader(file):

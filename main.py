@@ -2,6 +2,7 @@ from scrap_engine import scrap_init
 import pandas as pd 
 from data_converter import flotify, replacer
 from graph_handler import graph_generator
+from dataframe_handler import data_sort, data_filter,df_converter
 import time
 roe_list = []
 pe_list = []
@@ -51,9 +52,8 @@ for index, row in assets_dataframe.iterrows():
 full_asset_data = {'ASSET_NAME':asset_name_list,'ROE':roe_list,'P_L':pe_list}
 full_asset_dataframe = pd.DataFrame(data = full_asset_data, columns=['ASSET_NAME','ROE','P_L'])
 
-full_asset_dataframe.sort_values(by = 'ROE', ascending = False, inplace = True)
-full_asset_dataframe.sort_values(by = 'P_L', ascending = True, inplace = True)
-full_asset_dataframe = full_asset_dataframe[full_asset_dataframe.ROE >= 25]
-full_asset_dataframe.to_csv('JOEL.csv')
+full_asset_dataframe=data_sort(full_asset_dataframe,'ROE',False, True)
+full_asset_dataframe=data_sort(full_asset_dataframe,'P_L',False, True)
+full_asset_dataframe=data_filter(full_asset_data,'ROE',25)
+df_converter(full_asset_dataframe,'JOEL.csv','csv')
 graph_generator(full_asset_dataframe)
-full_asset_dataframe.reset_index(inplace = True)
