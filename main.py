@@ -1,30 +1,27 @@
-from scrap_engine import scrap_init
+from scrap_engine import scrap_init, get_url, get_element_xpath, strip
 import pandas as pd 
 from data_converter import flotify, replacer
 from graph_handler import graph_generator
-from dataframe_handler import data_sort, data_filter,df_converter
+from dataframe_handler import data_sort
 import time
 roe_list = []
 pe_list = []
 asset_name_list = []    
 assets_dataframe = pd.read_json('assets_name.json')
 base_url = 'https://statusinvest.com.br/acoes/'
+browser = scrap_init(base_url)
 
 
 for index, row in assets_dataframe.iterrows():
     asset = row['B3_CODE']
     asset_name_list.append(asset)
     asset_url = base_url + asset
-    soup = scrap_init(True, asset_url)
-    
+    get_url(browser,asset_url)
     try:
-        
-        roe = soup.find('div', title='Mede a capacidade de agregar valor de uma empresa a partir de seus próprios recursos e do dinheiro de investidores.')
-        roe = roe.find('strong',class_ ='value d-block lh-4 fs-4 fw-700').text.strip()
-        roe = replacer(roe, '%', '')
-        roe = replacer(roe, ',','.')
-        roe = flotify(roe)
+        roe=get_element_xpath(browser,'//*[@id="indicators-section"]/div[2]/div/div[4]/div/div[1]/div/div/strong')
+        roe=strip(roe)
         roe_list.append(roe)
+
 
     except:
          roe = 0
@@ -33,12 +30,9 @@ for index, row in assets_dataframe.iterrows():
          pass
     
     try:
-        pe = soup.find('div', title='Dá uma ideia do quanto o mercado está disposto a pagar pelos lucros da empresa.')
-        pe = pe.find('strong',class_ ='value d-block lh-4 fs-4 fw-700').text.strip()
-        pe = replacer(pe, '%', '')
-        pe = replacer(pe, ',','.')
-        pe = flotify(pe)
-        pe_list.append(pe)
+        pe=get_element_xpath(browser,'//*[@id="indicators-section"]/div[2]/div/div[1]/div/div[2]/div/div/strong')
+        pe=strip(pe)
+        pe_list.append(roe)
         
         
     except:
@@ -51,9 +45,12 @@ for index, row in assets_dataframe.iterrows():
      
 full_asset_data = {'ASSET_NAME':asset_name_list,'ROE':roe_list,'P_L':pe_list}
 full_asset_dataframe = pd.DataFrame(data = full_asset_data, columns=['ASSET_NAME','ROE','P_L'])
-
-full_asset_dataframe=data_sort(full_asset_dataframe,'ROE',False, True)
+full_asset_dataframe = full_asset_dataframe.apply(lambda x: x.str.replace(',','.'))
+full_asset_dataframe = full_asset_dataframe.apply(lambda x: x.str.replace('-',''))
+full_asset_dataframe = full_asset_dataframe.apply(lambda x: x.str.replace('%',''))
+full_asset_dataframe = full_asset_dataframe.apply(lambda x: x.str.replace('null','0'))
 full_asset_dataframe=data_sort(full_asset_dataframe,'P_L',False, True)
-full_asset_dataframe=data_filter(full_asset_data,'ROE',25)
-df_converter(full_asset_dataframe,'JOEL.csv','csv')
+full_asset_dataframe = full_asset_dataframe.astype({'ASSET_NAME': 'str', 'ROE':'float', 'P_L':'float'}, errors= 'raise')
+full_asset_dataframe=full_asset_dataframe[full_asset_dataframe.ROE >= 25]
+full_asset_dataframe.to_csv('JOEL.csv')
 graph_generator(full_asset_dataframe)
